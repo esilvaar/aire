@@ -7,14 +7,21 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
+
 @Composable
-fun Screen1() {
-    Column(
-        modifier = Modifier.fillMaxSize().padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        Text("Pantalla de Monitoreo", style = MaterialTheme.typography.headlineMedium)
-        // Aquí puedes agregar formularios o gráficos
+fun Screen1(onToggleTheme: () -> Unit) {
+    Column {
+
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Text("Pantalla de Monitoreo", style = MaterialTheme.typography.headlineMedium)
+            // Puedes agregar formularios o gráficos aquí
+        }
     }
 }
+

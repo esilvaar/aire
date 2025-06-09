@@ -1,48 +1,31 @@
 package com.example.aire.screens
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import com.example.aire.card.ParqueCard
+import com.example.aire.datastore.ParqueDataStore
+import kotlinx.coroutines.launch
 
 @Composable
-fun HomeScreen() {
-    Column(
-        modifier = Modifier.fillMaxSize().padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    )
-    {Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        TextButton(
-            onClick = { /* TODO: Acción para "Todos" */ },
-            modifier = Modifier.weight(1f)
-        ) {
-            Text(
-                text = "Todos",
-                style = MaterialTheme.typography.bodySmall
-            )
-        }
+fun HomeScreen(onToggleTheme: () -> Unit) {
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+    val parqueDataStore = remember { ParqueDataStore(context) }
+    val parques by parqueDataStore.parques.collectAsState(initial = emptyList())
 
-        TextButton(
-            onClick = { /* TODO: Acción para "Favoritos" */ },
-            modifier = Modifier.weight(1f)
-        ) {
-            Text(
-                text = "Favoritos",
-                style = MaterialTheme.typography.bodySmall,
-                textAlign = androidx.compose.ui.text.style.TextAlign.End
-            )
+    Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
+        Spacer(modifier = Modifier.height(16.dp))
+
+        LazyColumn(modifier = Modifier.fillMaxWidth()) {
+            items(parques) { parque ->
+                ParqueCard(parque)
+            }
         }
-    }
-        Text("Bienvenido a AIRE", style = MaterialTheme.typography.headlineMedium)
-        Spacer(modifier = Modifier.height(8.dp))
-        Text("Esta es la pantalla de inicio.")
     }
 }

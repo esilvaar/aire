@@ -10,11 +10,13 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun Screen2() {
     Column(
-        modifier = Modifier.fillMaxSize().padding(16.dp),
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
         Text("Pantalla de Historial", style = MaterialTheme.typography.headlineMedium)
-        // Aquí puedes simular historial con texto o listas
+        // Simula historial con listas o texto
     }
 }
