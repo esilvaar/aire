@@ -28,7 +28,7 @@ fun Bottom(navController: NavController) {
             .height(80.dp)
             .shadow(8.dp, RoundedCornerShape(24.dp))
             .clip(RoundedCornerShape(24.dp)),
-        color = Color.DarkGray
+        color = MaterialTheme.colorScheme.primary
     ) {
         Row(
             modifier = Modifier.fillMaxSize(),
@@ -54,7 +54,7 @@ fun Bottom(navController: NavController) {
                         imageVector = screen.icon,
                         contentDescription = screen.label,
                         modifier = Modifier.size(33.dp),
-                        tint = if (selected) Color.White else Color.Gray
+                        tint = if (selected) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.secondary
                     )
                 }
             }

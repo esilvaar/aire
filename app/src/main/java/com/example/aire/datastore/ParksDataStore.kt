@@ -1,43 +1,92 @@
 package com.example.aire.datastore
 
 import android.content.Context
+import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.stringSetPreferencesKey
+import androidx.datastore.preferences.preferencesDataStore
 import com.example.aire.model.Parque
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 
-class ParqueDataStore(context: Context) {
-    private val _parques = MutableStateFlow(obtenerParquesPredefinidos())
-    val parques: StateFlow<List<Parque>> = _parques
+private val Context.dataStore by preferencesDataStore(name = "parques_prefs")
 
-    private fun obtenerParquesPredefinidos(): List<Parque> {
-        return listOf(
-            Parque(
-                nombre = "Parque Metropolitano",
-                coordenadaX = -70.633,
-                coordenadaY = -33.431,
-                calidadAire = 85,
-                temperatura = 16,
-                humedad = 48,
-                viento = 3
-            ),
-            Parque(
-                nombre = "Parque Quinta Normal",
-                coordenadaX = -70.681,
-                coordenadaY = -33.437,
-                calidadAire = 42,
-                temperatura = 18,
-                humedad = 50,
-                viento = 4
-            ),
-            Parque(
-                nombre = "Parque O'Higgins",
-                coordenadaX = -70.660,
-                coordenadaY = -33.460,
-                calidadAire = 120,
-                temperatura = 21,
-                humedad = 45,
-                viento = 6
-            )
+class ParqueDataStore(private val context: Context) {
+
+    private val FAVORITOS_KEY = stringSetPreferencesKey("favoritos_parques")
+
+    // Parques base, sin favoritos
+    private fun obtenerParquesPredefinidos() = listOf(
+        Parque(
+            nombre = "Parque Metropolitano",
+            coordenadaX = -70.633,
+            coordenadaY = -33.431,
+            calidadAire = 85,
+            temperatura = 16,
+            humedad = 48,
+            viento = 3,
+            favorito = false
+        ),
+        Parque(
+            nombre = "Parque Quinta Normal",
+            coordenadaX = -70.681,
+            coordenadaY = -33.437,
+            calidadAire = 42,
+            temperatura = 18,
+            humedad = 50,
+            viento = 4,
+            favorito = false
+        ),
+        Parque(
+            nombre = "Parque O'Higgins",
+            coordenadaX = -70.660,
+            coordenadaY = -33.460,
+            calidadAire = 120,
+            temperatura = 21,
+            humedad = 45,
+            viento = 6,
+            favorito = false
+        ),
+        Parque(
+            nombre = "Parque Quinta Normal",
+            coordenadaX = -70.681,
+            coordenadaY = -33.437,
+            calidadAire = 42,
+            temperatura = 18,
+            humedad = 50,
+            viento = 4,
+            favorito = false
+        ),
+        Parque(
+            nombre = "Parque Quinta Normal",
+            coordenadaX = -70.681,
+            coordenadaY = -33.437,
+            calidadAire = 42,
+            temperatura = 18,
+            humedad = 50,
+            viento = 4,
+            favorito = false
         )
+    )
+
+    // Flow que emite la lista de parques con favoritos según prefs
+    val parques: Flow<List<Parque>> = context.dataStore.data.map { preferences ->
+        val favoritosSet = preferences[FAVORITOS_KEY] ?: emptySet()
+        obtenerParquesPredefinidos().map { parque ->
+            parque.copy(favorito = favoritosSet.contains(parque.nombre))
+        }
+    }
+
+    // Cambia favorito guardando en DataStore
+    suspend fun toggleFavorito(nombreParque: String) {
+        context.dataStore.edit { preferences ->
+            val actuales = preferences[FAVORITOS_KEY] ?: emptySet()
+            val mutableSet = actuales.toMutableSet()
+            if (mutableSet.contains(nombreParque)) {
+                mutableSet.remove(nombreParque)
+            } else {
+                mutableSet.add(nombreParque)
+            }
+            preferences[FAVORITOS_KEY] = mutableSet
+        }
     }
 }

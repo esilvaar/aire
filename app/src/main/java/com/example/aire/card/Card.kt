@@ -1,9 +1,14 @@
 package com.example.aire.card
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.outlined.Star
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -16,11 +21,14 @@ import androidx.compose.ui.unit.sp
 import com.example.aire.model.Parque
 
 @Composable
-fun ParqueCard(parque: Parque) {
+fun ParqueCard(
+    parque: Parque,
+    onToggleFavorito: () -> Unit
+) {
     val (colorFondo, descripcion) = when (parque.calidadAire) {
         in 0..50 -> Color(0xFFB9F6CA) to "Buena"
         in 51..100 -> Color(0xFFFFFF8D) to "Moderada"
-        in 101..150 -> Color(0xFFFFAB91) to "Dañina (sensibles)"
+        in 101..150 -> Color(0xFFFFAB91) to "Dañina"
         else -> Color(0xFFFF8A80) to "Peligrosa"
     }
 
@@ -28,7 +36,7 @@ fun ParqueCard(parque: Parque) {
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 8.dp, horizontal = 16.dp)
-            .heightIn(min = 140.dp), // <-- controla el mínimo
+            .heightIn(min = 140.dp),
         elevation = CardDefaults.cardElevation(6.dp),
         shape = MaterialTheme.shapes.medium
     ) {
@@ -37,19 +45,29 @@ fun ParqueCard(parque: Parque) {
                 .background(colorFondo)
                 .fillMaxWidth()
         ) {
-            // Nombre del Parque
-            Text(
-                text = parque.nombre,
+            Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .background(colorFondo)
                     .padding(top = 12.dp, start = 16.dp, end = 16.dp, bottom = 4.dp),
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color.Black
-            )
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = parque.nombre,
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.Black
+                )
 
-            // Sección principal con ICA y PM
+                Icon(
+                    imageVector = if (parque.favorito) Icons.Filled.Star else Icons.Outlined.Star,
+                    contentDescription = null,
+                    tint = if (parque.favorito) Color.Yellow else Color.Gray,
+                    modifier = Modifier.clickable { onToggleFavorito() }
+                )
+            }
+
             Row(
                 modifier = Modifier
                     .padding(horizontal = 16.dp, vertical = 4.dp)
@@ -77,7 +95,7 @@ fun ParqueCard(parque: Parque) {
                         fontWeight = FontWeight.Bold
                     )
                     Text(
-                        text = "PM2.5 | ${parque.calidadAire / 3} µg/m³", // valor ficticio
+                        text = "PM2.5 | ${parque.calidadAire / 3} µg/m³",
                         fontSize = 12.sp,
                         modifier = Modifier
                             .background(Color.White)
@@ -86,7 +104,6 @@ fun ParqueCard(parque: Parque) {
                 }
             }
 
-            // Datos de clima
             Row(
                 modifier = Modifier
                     .fillMaxWidth()

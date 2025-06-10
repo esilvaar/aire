@@ -1,6 +1,5 @@
 package com.example.aire.screens
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -18,7 +17,7 @@ import com.example.aire.model.Parque
 fun Screen1(onToggleTheme: () -> Unit) {
     val context = LocalContext.current
     val parqueDataStore = remember { ParqueDataStore(context) }
-    val parques by parqueDataStore.parques.collectAsState()
+    val parques by parqueDataStore.parques.collectAsState(initial = emptyList())
 
     var expanded by remember { mutableStateOf(false) }
     var nivelSeleccionado by remember { mutableStateOf("Todos") }
