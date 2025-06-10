@@ -7,5 +7,7 @@ data class Parque(
     val calidadAire: Int,
     val temperatura: Int = 14,
     val humedad: Int = 49,
-    val viento: Int = 0
+    val viento: Int = 0,
+    val favorito: Boolean,
+    val tipo: String
 )

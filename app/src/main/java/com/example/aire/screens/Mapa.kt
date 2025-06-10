@@ -1,6 +1,5 @@
 package com.example.aire.screens
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -18,11 +17,9 @@ import com.example.aire.model.Parque
 fun Screen1(onToggleTheme: () -> Unit) {
     val context = LocalContext.current
     val parqueDataStore = remember { ParqueDataStore(context) }
-    val parques by parqueDataStore.parques.collectAsState()
-
+    val parques by parqueDataStore.parques.collectAsState(initial = emptyList())
     var expanded by remember { mutableStateOf(false) }
     var nivelSeleccionado by remember { mutableStateOf("Todos") }
-
     val niveles = listOf("Filtrar", "Buena", "Moderada", "Alta")
 
     fun filtrarParques(parques: List<Parque>, nivel: String): List<Parque> {
@@ -80,18 +77,19 @@ fun Screen1(onToggleTheme: () -> Unit) {
             Box {
                 Button(
                     onClick = { expanded = true },
-                    colors = ButtonDefaults.buttonColors(containerColor = Color.DarkGray) // Verde
+                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary) // Verde
                 ) {
-                    Text(nivelSeleccionado, color = Color.White)
+                    Text(nivelSeleccionado, color = MaterialTheme.colorScheme.primary)
                 }
 
                 DropdownMenu(
                     expanded = expanded,
                     onDismissRequest = { expanded = false }
+
                 ) {
                     niveles.forEach { nivel ->
                         DropdownMenuItem(
-                            text = { Text(nivel) },
+                            text = { Text(nivel,color = MaterialTheme.colorScheme.secondary) },
                             onClick = {
                                 nivelSeleccionado = nivel
                                 expanded = false

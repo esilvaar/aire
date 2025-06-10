@@ -4,24 +4,31 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 
+// Paleta original oscura
 private val DarkColorScheme = darkColorScheme(
-    primary = Purple80,
-    secondary = PurpleGrey80,
-    tertiary = Pink80
+    primary = TertiaryGrey,
+    secondary = PrimaryGray,
+    tertiary = SecondaryGrey
 )
 
+// Paleta original clara
 private val LightColorScheme = lightColorScheme(
-    primary = Purple40,
-    secondary = PurpleGrey40,
-    tertiary = Pink40
+    primary = PrimaryBlue,
+    secondary = SecondaryBlue,
+    tertiary = TertiaryBlue
 )
+
 
 @Composable
 fun AireTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
+    useGreenPalette: Boolean = false,
     content: @Composable () -> Unit
 ) {
-    val colorScheme = if (darkTheme) DarkColorScheme else LightColorScheme
+    val colorScheme = when {
+        !useGreenPalette && darkTheme -> DarkColorScheme
+        else -> LightColorScheme
+    }
 
     MaterialTheme(
         colorScheme = colorScheme,
