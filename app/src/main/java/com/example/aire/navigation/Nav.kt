@@ -1,3 +1,6 @@
+
+
+
 package com.example.aire.navigation
 
 import androidx.compose.foundation.layout.*
@@ -24,11 +27,6 @@ fun Nav(onToggleTheme: () -> Unit) {
     val currentRoute = navBackStackEntry?.destination?.route
 
     Scaffold(
-        topBar = {
-            if (currentRoute == Screen.Home.route || currentRoute == Screen.Screen1.route) {
-                Top(onToggleTheme = onToggleTheme)
-            }
-        },
         bottomBar = {
             Bottom(navController = navController)
         }
@@ -40,6 +38,7 @@ fun Nav(onToggleTheme: () -> Unit) {
         ) {
             composable(Screen.Home.route) { HomeScreen(onToggleTheme = onToggleTheme) }
             composable(Screen.Screen1.route) { Screen1(onToggleTheme = onToggleTheme) }
+
             composable(Screen.Screen2.route) { Screen2() }
         }
     }

@@ -53,7 +53,8 @@ dependencies {
     implementation(libs.androidx.activity.compose)
     // Elimina el BOM para material3 y fija la versión explícita
     implementation(libs.material3)
-
+    implementation(libs.maps.compose)
+    implementation(libs.play.services.maps.v1820)
     // Puedes dejar otras dependencias tal cual las tienes
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
