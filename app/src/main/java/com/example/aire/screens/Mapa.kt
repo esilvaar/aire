@@ -1,6 +1,5 @@
 package com.example.aire.screens
 
-import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
@@ -24,7 +23,7 @@ fun Screen1(onToggleTheme: () -> Unit) {
     var expanded by remember { mutableStateOf(false) }
     var nivelSeleccionado by remember { mutableStateOf("Todos") }
 
-    val niveles = listOf("Todos", "Buena", "Moderada", "Alta")
+    val niveles = listOf("Filtrar", "Buena", "Moderada", "Alta")
 
     fun filtrarParques(parques: List<Parque>, nivel: String): List<Parque> {
         return when (nivel) {
@@ -47,7 +46,7 @@ fun Screen1(onToggleTheme: () -> Unit) {
     }
 
     Box(modifier = Modifier.fillMaxSize()) {
-        // Mapa ocupa todo el tamaño
+        // Mapa
         GoogleMap(
             modifier = Modifier.fillMaxSize(),
             cameraPositionState = cameraPositionState
@@ -69,23 +68,21 @@ fun Screen1(onToggleTheme: () -> Unit) {
             }
         }
 
-        // Filtro flotante en esquina superior izquierda
+        // Dropdown flotante sobre el mapa
         Column(
             modifier = Modifier
+                .align(Alignment.TopEnd)
                 .padding(16.dp)
-                .align(Alignment.TopStart)
                 .wrapContentSize()
-                .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.8f))
                 .padding(8.dp)
         ) {
-            Text("Nivel seleccionado: $nivelSeleccionado", style = MaterialTheme.typography.labelMedium)
 
             Box {
                 Button(
                     onClick = { expanded = true },
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF4CAF50)) // Verde
+                    colors = ButtonDefaults.buttonColors(containerColor = Color.DarkGray) // Verde
                 ) {
-                    Text("Filtrar", color = Color.White)
+                    Text(nivelSeleccionado, color = Color.White)
                 }
 
                 DropdownMenu(
