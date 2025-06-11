@@ -44,6 +44,7 @@ android {
 }
 
 dependencies {
+    implementation(libs.androidx.material.icons.extended)
     implementation(libs.mpandroidchart)
     implementation(libs.androidx.datastore)
     implementation(libs.kotlinx.serialization.json)

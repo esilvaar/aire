@@ -17,7 +17,7 @@ sealed class Screen(
 ) {
     object Home : Screen("home", "Inicio", Icons.Default.Home)
     object Screen1 : Screen("screen1", "Mapa", Icons.Default.LocationOn)
-    object Screen2 : Screen("screen2", "Historial", Icons.Default.Warning)
+    object Screen2 : Screen("screen2", "Resumen", Icons.Default.Warning)
 }
 
 @Composable
