@@ -94,42 +94,6 @@ fun summary() {
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.tertiary)
     ) {
-        TopAppBar(
-            title = {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier.fillMaxWidth()
-
-                ) {
-                    Spacer(modifier = Modifier.height(8.dp))
-
-                    Row(
-                        horizontalArrangement = Arrangement.Start,
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        FilterChip(
-                            onClick = { selectedPeriod = "Todos" },
-                            label = { Text("Todos", fontSize = 14.sp) },
-                            selected = selectedPeriod == "Todos",
-                            colors = FilterChipDefaults.filterChipColors(
-                                selectedContainerColor = MaterialTheme.colorScheme.secondary,
-                                selectedLabelColor = MaterialTheme.colorScheme.primary
-                            )
-                        )
-                        Spacer(modifier = Modifier.width(16.dp))
-                        FilterChip(
-                            onClick = { selectedPeriod = "Favoritos" },
-                            label = { Text("Favoritos", fontSize = 14.sp) },
-                            selected = selectedPeriod == "Favoritos",
-                            colors = FilterChipDefaults.filterChipColors(
-                                selectedContainerColor = MaterialTheme.colorScheme.secondary,
-                                selectedLabelColor = MaterialTheme.colorScheme.primary
-                            )
-                        )
-                    }
-                }
-            }
-        )
 
         Column(
             modifier = Modifier
@@ -138,6 +102,38 @@ fun summary() {
                 .padding(16.dp)
 
         ) {
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(MaterialTheme.colorScheme.tertiary)
+                    .padding(vertical = 8.dp),
+                horizontalArrangement = Arrangement.Start
+            ) {
+                FilterChip(
+                    onClick = { selectedPeriod = "Todos" },
+                    label = { Text("Todos", fontSize = 14.sp) },
+                    selected = selectedPeriod == "Todos",
+                    colors = FilterChipDefaults.filterChipColors(
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        selectedContainerColor = MaterialTheme.colorScheme.secondary,
+                        labelColor = MaterialTheme.colorScheme.secondary,
+                        selectedLabelColor = MaterialTheme.colorScheme.primary
+                    )
+                )
+                Spacer(modifier = Modifier.width(16.dp))
+                FilterChip(
+                    onClick = { selectedPeriod = "Favoritos" },
+                    label = { Text("Favoritos", fontSize = 14.sp) },
+                    selected = selectedPeriod == "Favoritos",
+                    colors = FilterChipDefaults.filterChipColors(
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        selectedContainerColor = MaterialTheme.colorScheme.secondary,
+                        labelColor = MaterialTheme.colorScheme.secondary,
+                        selectedLabelColor = MaterialTheme.colorScheme.primary
+                    )
+                )
+            }
 
             if (circularProgressDataByCriterio.isNotEmpty()) {
                 circularProgressDataByCriterio.forEach { (criterio, datosParques) ->
@@ -186,6 +182,7 @@ fun summary() {
         }
     }
 }
+
 
 @Composable
 fun CircularProgressIndicator(
