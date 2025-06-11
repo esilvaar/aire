@@ -21,56 +21,44 @@ import com.google.maps.android.compose.*
 import com.example.aire.model.Parque
 
 @Composable
-fun Screen1(onToggleTheme: () -> Unit) {
+fun Map(onToggleTheme: () -> Unit) {
     val context = LocalContext.current
     val parqueDataStore = remember { ParqueDataStore(context) }
-    val parques by parqueDataStore.parques.collectAsState(initial = emptyList())
+    val parques by parqueDataStore.parques.collectAsState(initial = emptyList())//mismo que home
+    var expanded by remember { mutableStateOf(false) }//estado para filtro dropdown
+    var nivelSeleccionado by remember { mutableStateOf("Filtrar") }//recuerda el nivel seleccionado
+    var filtroTipo by remember { mutableStateOf("Todos") }//recuerda el tipo seleccionado
+    var searchText by remember { mutableStateOf(TextFieldValue("")) }//guarda el texto de busqueda
+    val niveles = listOf("Filtrar", "Buena", "Moderada", "Alta")//define una lista de niveles
 
-    // Estados para filtros y búsqueda
-    var expanded by remember { mutableStateOf(false) }
-    var nivelSeleccionado by remember { mutableStateOf("Filtrar") }
-    var filtroTipo by remember { mutableStateOf("Todos") }
-    var searchText by remember { mutableStateOf(TextFieldValue("")) }
-    var parqueSeleccionado by remember { mutableStateOf<String?>(null) }
-
-    val niveles = listOf("Filtrar", "Buena", "Moderada", "Alta")
-
+    //funcion local para filtrar parques segun criterios
     fun filtrarParques(parques: List<Parque>, nivel: String, tipo: String, busqueda: String): List<Parque> {
-        var parquesFiltrados = parques
+        var parquesFiltrados = parques//guarda los filtrados
 
-        // Filtrar por nivel de calidad del aire
-        parquesFiltrados = when (nivel) {
+        parquesFiltrados = when (nivel) {//por nivel de calidad
             "Buena" -> parquesFiltrados.filter { it.calidadAire < 50 }
             "Moderada" -> parquesFiltrados.filter { it.calidadAire in 50..99 }
             "Alta" -> parquesFiltrados.filter { it.calidadAire >= 100 }
             else -> parquesFiltrados
         }
-
-        // Filtrar por tipo (urbano/nacional)
-        parquesFiltrados = when (tipo) {
+        parquesFiltrados = when (tipo) {//filtra por tipo
             "Urbano" -> parquesFiltrados.filter { it.tipo == "urbano" }
             "Nacional" -> parquesFiltrados.filter { it.tipo == "nacional" }
             else -> parquesFiltrados
         }
-
-        // Filtrar por búsqueda de nombre
-        if (busqueda.isNotEmpty()) {
+        if (busqueda.isNotEmpty()) {//segun nombre de barra busqueda
             parquesFiltrados = parquesFiltrados.filter {
                 it.nombre.contains(busqueda, ignoreCase = true)
             }
         }
-
         return parquesFiltrados
     }
-
-    val parquesFiltrados = filtrarParques(parques, nivelSeleccionado, filtroTipo, searchText.text)
-
-    val defaultLocation = LatLng(
+    val parquesFiltrados = filtrarParques(parques, nivelSeleccionado, filtroTipo, searchText.text)//llama a la funcion
+    val defaultLocation = LatLng(//define la ubicacion por defecto
         parquesFiltrados.firstOrNull()?.coordenadaY ?: -33.45,
         parquesFiltrados.firstOrNull()?.coordenadaX ?: -70.6667
     )
-
-    val cameraPositionState = rememberCameraPositionState {
+    val cameraPositionState = rememberCameraPositionState {//recuerda el estado del zoom posicion etc
         position = CameraPosition.fromLatLngZoom(defaultLocation, 11f)
     }
 
@@ -80,24 +68,18 @@ fun Screen1(onToggleTheme: () -> Unit) {
             modifier = Modifier.fillMaxSize(),
             cameraPositionState = cameraPositionState
         ) {
-            // Agregar marcadores para cada parque filtrado
-            parquesFiltrados.forEach { parque ->
+
+            parquesFiltrados.forEach { parque ->// Agrega marcadores para cada parque filtrado
                 val hue = when {
                     parque.calidadAire < 50 -> BitmapDescriptorFactory.HUE_GREEN
                     parque.calidadAire in 50..99 -> BitmapDescriptorFactory.HUE_YELLOW
-                    parque.calidadAire >= 100 -> BitmapDescriptorFactory.HUE_RED
-                    else -> BitmapDescriptorFactory.HUE_BLUE
+                    else ->  BitmapDescriptorFactory.HUE_RED
                 }
 
-                Marker(
+                Marker(//agrega los marcadores anteriores
                     state = MarkerState(position = LatLng(parque.coordenadaY, parque.coordenadaX)),
-                    title = parque.nombre,
-                    snippet = "Calidad del aire: ${parque.calidadAire}",
                     icon = BitmapDescriptorFactory.defaultMarker(hue),
-                    onClick = {
-                        parqueSeleccionado = parque.nombre
-                        true
-                    }
+
                 )
             }
         }
@@ -113,7 +95,6 @@ fun Screen1(onToggleTheme: () -> Unit) {
             OutlinedTextField(
                 value = searchText,
                 onValueChange = { searchText = it },
-                label = { Text("Buscar parques") },
                 leadingIcon = {
                     Icon(
                         Icons.Default.Search,
@@ -122,12 +103,12 @@ fun Screen1(onToggleTheme: () -> Unit) {
                 },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(56.dp),
+                    .defaultMinSize(minHeight = 48.dp),
                 singleLine = true,
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedContainerColor = MaterialTheme.colorScheme.surface,
                     unfocusedContainerColor = MaterialTheme.colorScheme.surface,
-                    focusedBorderColor = MaterialTheme.colorScheme.primary,
+                    focusedBorderColor = MaterialTheme.colorScheme.secondary,
                     unfocusedBorderColor = MaterialTheme.colorScheme.outline
                 )
             )
@@ -255,37 +236,6 @@ fun Screen1(onToggleTheme: () -> Unit) {
                             color = MaterialTheme.colorScheme.secondary,
                             style = MaterialTheme.typography.bodySmall
                         )
-                    }
-                }
-            }
-        }
-
-        // Mostrar nombre del parque seleccionado
-        parqueSeleccionado?.let { nombreParque ->
-            Card(
-                modifier = Modifier
-                    .align(Alignment.Center)
-                    .padding(16.dp),
-                elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
-                shape = RoundedCornerShape(12.dp)
-            ) {
-                Column(
-                    modifier = Modifier.padding(16.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Text(
-                        text = nombreParque,
-                        style = MaterialTheme.typography.titleMedium,
-                        color = MaterialTheme.colorScheme.primary
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Button(
-                        onClick = { parqueSeleccionado = null },
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = MaterialTheme.colorScheme.secondary
-                        )
-                    ) {
-                        Text("Cerrar", color = MaterialTheme.colorScheme.primary)
                     }
                 }
             }

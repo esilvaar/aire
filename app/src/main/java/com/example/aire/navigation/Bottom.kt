@@ -3,32 +3,26 @@ package com.example.aire.navigation
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 
-@Composable
-fun Bottom(navController: NavController) {
-    val navBackStackEntry = navController.currentBackStackEntryAsState().value
-    val currentRoute = navBackStackEntry?.destination?.route
+@Composable//funcion responsable de renderizar la parte inferior de la pantalla
+fun Bottom(navController: NavController) {//recibe navcontroller para gestionar navegacion
+    val navBackStackEntry = navController.currentBackStackEntryAsState().value//obtiene el ultimno elemento de la pila
+    val currentRoute = navBackStackEntry?.destination?.route//obtiene la ruta actual
+    val items = listOf(Screen.Home, Screen.Screen1, Screen.Screen2)//lista de objetos screen
 
-    val items = listOf(Screen.Home, Screen.Screen1, Screen.Screen2)
-
-    Surface(
+    Surface(//orden de la pantalla
         modifier = Modifier
             .fillMaxWidth()
             .height(88.dp),
-        color = Color.White,
+        color = MaterialTheme.colorScheme.tertiary,
         shadowElevation = 8.dp
     ) {
         Row(
@@ -38,9 +32,8 @@ fun Bottom(navController: NavController) {
             horizontalArrangement = Arrangement.SpaceEvenly,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            items.forEach { screen ->
-                val selected = currentRoute == screen.route
-
+            items.forEach { screen ->//itera sobre la lista items
+                val selected = currentRoute == screen.route//verifica que el seleccionado sea la ruta actual
                 Column(
                     modifier = Modifier
                         .weight(1f)
@@ -49,12 +42,12 @@ fun Bottom(navController: NavController) {
                     verticalArrangement = Arrangement.Center
                 ) {
                     IconButton(
-                        onClick = {
-                            navController.navigate(screen.route) {
-                                launchSingleTop = true
-                                restoreState = true
-                                popUpTo(navController.graph.startDestinationId) {
-                                    saveState = true
+                        onClick = {//define la accion al hacer click
+                            navController.navigate(screen.route) {//navega al screen seleccionado
+                                launchSingleTop = true//asegura que solo haya una instancia del screen en la pila
+                                restoreState = true//restaura el estado del screen para otra visita
+                                popUpTo(navController.graph.startDestinationId) {//limpia la pila de navegacion hasta ruta en especifico
+                                    saveState = true//guarda el estado del screen
                                 }
                             }
                         },
@@ -64,7 +57,7 @@ fun Bottom(navController: NavController) {
                             imageVector = screen.icon,
                             contentDescription = screen.label,
                             modifier = Modifier.size(22.dp),
-                            tint = if (selected) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.tertiary
+                            tint = if (selected) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.primary//opciones de cambio de tema
                         )
                     }
 
@@ -72,7 +65,7 @@ fun Bottom(navController: NavController) {
                         text = screen.label,
                         fontSize = 10.sp,
                         fontWeight = if (selected) FontWeight.Medium else FontWeight.Normal,
-                        color = if (selected) MaterialTheme.colorScheme.tertiary else Color(0xFF9E9E9E),
+                        color = if (selected) MaterialTheme.colorScheme.secondary else Color(0xFF9E9E9E),
                         maxLines = 2,
                         lineHeight = 11.sp,
                         modifier = Modifier.padding(top = 2.dp)

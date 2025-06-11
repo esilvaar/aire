@@ -8,13 +8,13 @@ import com.example.aire.model.Parque
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
-private val Context.dataStore by preferencesDataStore(name = "parques_prefs")
+private val Context.dataStore by preferencesDataStore(name = "parques_prefs")//define el nombre del archivo de preferencias
 
 class ParqueDataStore(private val context: Context) {
 
-    private val FAVORITOS_KEY = stringSetPreferencesKey("favoritos_parques")
+    private val FAVORITOS_KEY = stringSetPreferencesKey("favoritos_parques")//define la clave de preferencia
 
-    // Parques base, sin favoritos
+    // Lista de parques predefinidos(privada)
     private fun obtenerParquesPredefinidos() = listOf(
         Parque(
             nombre = "Parque Metropolitano",

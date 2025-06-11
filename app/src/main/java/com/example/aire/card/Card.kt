@@ -5,42 +5,50 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
-import androidx.compose.material.icons.outlined.Favorite
+import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.aire.model.Parque
+//define l clase para almacenar la informacion necesaria para la card
+data class CalidadAireVisual(
+    val colorFondo: Color,
+    val descripcion: String,
+    val icono: ImageVector,
+    val colorIcono: Color
+)
 
 @Composable
 fun ParqueCard(
     parque: Parque,
     onToggleFavorito: () -> Unit
 ) {
-    val (colorFondo, descripcion, icono, colorIcono) = when (parque.calidadAire) {
-        in 0..50 -> Quadruple(
+    val visual = when (parque.calidadAire) {//define variables de color, icono,colores, descripcion, segun el criterio de calidad
+        in 0..50 -> CalidadAireVisual(
             Color(0xFFB9F6CA),
             "Buena",
             Icons.Filled.WbSunny,
             Color(0xFF4CAF50)
         )
-        in 51..100 -> Quadruple(
+        in 51..100 -> CalidadAireVisual(
             Color(0xFFFFFF8D),
             "Moderada",
             Icons.Filled.Cloud,
             Color(0xFFFF9800)
         )
-        in 101..150 -> Quadruple(
+        in 101..150 -> CalidadAireVisual(
             Color(0xFFFFAB91),
             "Dañina",
             Icons.Filled.Warning,
             Color(0xFFFF5722)
         )
-        else -> Quadruple(
+        else -> CalidadAireVisual(
             Color(0xFFFF8A80),
             "Peligrosa",
             Icons.Filled.Dangerous,
@@ -58,7 +66,7 @@ fun ParqueCard(
     ) {
         Column(
             modifier = Modifier
-                .background(colorFondo)
+                .background(visual.colorFondo)
                 .fillMaxWidth()
         ) {
             Row(
@@ -75,11 +83,11 @@ fun ParqueCard(
                     color = Color.Black
                 )
 
-                Icon(
-                    imageVector = if (parque.favorito) Icons.Filled.Favorite else Icons.Outlined.Favorite,
+                Icon(//define como se comportará segun la accion de favorito
+                    imageVector = if (parque.favorito) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
                     contentDescription = "Favorito",
                     tint = if (parque.favorito) Color.Red else Color.Gray,
-                    modifier = Modifier.clickable { onToggleFavorito() }
+                    modifier = Modifier.clickable { onToggleFavorito() }//llama la funcion de home
                 )
             }
 
@@ -94,7 +102,8 @@ fun ParqueCard(
                     Text(
                         text = "${parque.calidadAire}",
                         fontSize = 32.sp,
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.Bold,
+                        color = Color.Black
                     )
                     Text(
                         text = "ICA°",
@@ -102,32 +111,24 @@ fun ParqueCard(
                         color = Color.DarkGray
                     )
                 }
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Icon(
-                        imageVector = icono,
-                        contentDescription = "Calidad del aire: $descripcion",
-                        tint = colorIcono,
-                        modifier = Modifier.size(48.dp)
-                    )
-                    Text(
-                        text = descripcion,
-                        fontSize = 12.sp,
-                        fontWeight = FontWeight.Medium,
-                        color = Color.DarkGray
-                    )
-                }
+                Icon(
+                    imageVector = visual.icono,
+                    tint = visual.colorIcono,
+                    modifier = Modifier.size(48.dp),
+                    contentDescription = "Ícono de calidad del aire"
+                )
             }
 
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(Color.White)
+                    .background(MaterialTheme.colorScheme.tertiary)
                     .padding(vertical = 8.dp, horizontal = 16.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Temperatura: ${parque.temperatura}°C",
+                    text = " ${visual.descripcion}",
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold
                 )
@@ -135,13 +136,10 @@ fun ParqueCard(
                     text = "PM2.5 | ${parque.calidadAire / 3} µg/m³",
                     fontSize = 12.sp,
                     modifier = Modifier
-                        .background(Color.White)
+                        .background(MaterialTheme.colorScheme.tertiary)
                         .padding(horizontal = 6.dp, vertical = 2.dp)
                 )
             }
         }
     }
 }
-
-// Helper data class to simulate destructuring of 4 values
-data class Quadruple<A, B, C, D>(val first: A, val second: B, val third: C, val fourth: D)

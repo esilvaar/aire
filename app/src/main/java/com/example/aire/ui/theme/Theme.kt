@@ -6,27 +6,26 @@ import androidx.compose.runtime.Composable
 
 // Paleta original oscura
 private val DarkColorScheme = darkColorScheme(
-    primary = TertiaryGrey,
-    secondary = PrimaryGray,
-    tertiary = SecondaryGrey
+    primary =PrimaryGray ,
+    secondary = SecondaryGray,
+    tertiary = fondo1
 )
 
 // Paleta original clara
 private val LightColorScheme = lightColorScheme(
     primary = PrimaryBlue,
     secondary = SecondaryBlue,
-    tertiary = TertiaryBlue
+    tertiary = fondo
 )
 
 
 @Composable
 fun AireTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    useGreenPalette: Boolean = false,
     content: @Composable () -> Unit
 ) {
     val colorScheme = when {
-        !useGreenPalette && darkTheme -> DarkColorScheme
+        darkTheme -> DarkColorScheme
         else -> LightColorScheme
     }
 

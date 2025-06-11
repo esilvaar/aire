@@ -17,16 +17,14 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen(onToggleTheme: () -> Unit) {
-    val context = LocalContext.current
-    val scope = rememberCoroutineScope()
-    val parqueDataStore = remember { ParqueDataStore(context) }
-    val parques by parqueDataStore.parques.collectAsState(initial = emptyList())
-
-    var showMenu by remember { mutableStateOf(false) }
-    var mostrarFavoritos by remember { mutableStateOf(false) }
-
-    val parquesMostrados = if (mostrarFavoritos) {
+fun Home(onToggleTheme: () -> Unit) {
+    val context = LocalContext.current//obtiene el contexto actual para obtener los datos
+    val scope = rememberCoroutineScope()//
+    val parqueDataStore = remember { ParqueDataStore(context) }//inicializa el parque data store y lo mantiene en memoria
+    val parques by parqueDataStore.parques.collectAsState(initial = emptyList())//obtiene los parques desde el data store
+    var showMenu by remember { mutableStateOf(false) }//estado booleano que maneja el menu desplegable
+    var mostrarFavoritos by remember { mutableStateOf(false) }//estado booleano que maneja si se muestran todos los parques o solo los favoritos
+    val parquesMostrados = if (mostrarFavoritos) {//si mostrar favoritos es true, se muestran solo los parques favoritos
         parques.filter { it.favorito }
     } else {
         parques
@@ -39,7 +37,7 @@ fun HomeScreen(onToggleTheme: () -> Unit) {
                     // Sin título
                 },
                 navigationIcon = {
-                    IconButton(onClick = { showMenu = true }) {
+                    IconButton(onClick = { showMenu = true }) {//al hacer click cambia el estado
                         Icon(
                             Icons.Default.Menu,
                             contentDescription = "Menú",
@@ -48,7 +46,7 @@ fun HomeScreen(onToggleTheme: () -> Unit) {
                     }
                     DropdownMenu(
                         expanded = showMenu,
-                        onDismissRequest = { showMenu = false },
+                        onDismissRequest = { showMenu = false },//vuelve a false al cerrar
                     ) {
                         DropdownMenuItem(
                             text = {
@@ -57,14 +55,14 @@ fun HomeScreen(onToggleTheme: () -> Unit) {
                                     color = MaterialTheme.colorScheme.secondary
                                 )
                             },
-                            onClick = {
+                            onClick = {//al hacer click se cierra y llama a la funcion cambiar tema del mainActivity
                                 showMenu = false
                                 onToggleTheme()
                             }
                         )
                     }
                 },
-                actions = {
+                actions = {//define la accion de otros botones
                     Row(
                         modifier = Modifier
                             .fillMaxHeight()
@@ -72,8 +70,8 @@ fun HomeScreen(onToggleTheme: () -> Unit) {
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Button(
-                            onClick = { mostrarFavoritos = false },
-                            colors = ButtonDefaults.buttonColors(
+                            onClick = { mostrarFavoritos = false },//al hacer click cambia el estado
+                            colors = ButtonDefaults.buttonColors(//cambio de color si está seleccionado
                                 containerColor = if (!mostrarFavoritos)
                                     MaterialTheme.colorScheme.primary
                                 else
@@ -86,7 +84,7 @@ fun HomeScreen(onToggleTheme: () -> Unit) {
                             Text("Todos", color = MaterialTheme.colorScheme.secondary)
                         }
 
-                        Button(
+                        Button(//mismas funciones que el anterior
                             onClick = { mostrarFavoritos = true },
                             colors = ButtonDefaults.buttonColors(
                                 containerColor = if (mostrarFavoritos)
@@ -99,7 +97,7 @@ fun HomeScreen(onToggleTheme: () -> Unit) {
                             Text("Favoritos", color = MaterialTheme.colorScheme.secondary)
                         }
                     }
-                },
+                },//configura colores de topbar
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
                     containerColor = androidx.compose.ui.graphics.Color.Transparent,
                     titleContentColor = androidx.compose.ui.graphics.Color.Transparent,
@@ -109,7 +107,7 @@ fun HomeScreen(onToggleTheme: () -> Unit) {
                 modifier = Modifier.fillMaxWidth(),
                 scrollBehavior = null
             )
-        },
+        },//lo que se verá en el espacio restante
         content = { innerPadding ->
             Column(
                 modifier = Modifier
@@ -119,11 +117,11 @@ fun HomeScreen(onToggleTheme: () -> Unit) {
             ) {
                 Spacer(modifier = Modifier.height(16.dp))
 
-                LazyColumn(
-                    modifier = Modifier.fillMaxWidth(),
-                    contentPadding = PaddingValues(bottom = 104.dp) // Padding para el bottom navigation
+                LazyColumn(//renderiza solo lo que se ve
+                    modifier = Modifier.fillMaxWidth(),//ajusta el tamaño de la columna
+                    contentPadding = PaddingValues(bottom = 104.dp) // Padding para no quedar bajo el nav
                 ) {
-                    items(parquesMostrados) { parque ->
+                    items(parquesMostrados) { parque ->//funcion de lazy column que renderiza cada parque
                         ParqueCard(
                             parque = parque,
                             onToggleFavorito = {

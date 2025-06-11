@@ -1,5 +1,5 @@
 package com.example.aire.model
-
+//define la estructura de los datos de parque
 data class Parque(
     val nombre: String,
     val coordenadaX: Double,

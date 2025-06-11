@@ -1,46 +1,30 @@
 package com.example.aire.screens
 
-import android.graphics.Color
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.viewinterop.AndroidView
 import com.example.aire.datastore.ParqueDataStore
-import com.example.aire.model.Parque
-import com.github.mikephil.charting.charts.BarChart
-import com.github.mikephil.charting.components.XAxis
-import com.github.mikephil.charting.data.BarData
-import com.github.mikephil.charting.data.BarDataSet
 import androidx.compose.ui.graphics.Color as ComposeColor
-import com.github.mikephil.charting.data.BarEntry
 import kotlinx.coroutines.flow.map
-import kotlin.math.cos
-import kotlin.math.sin
 
-data class CircularProgressData(
+data class CircularProgressData(//define clase para almacenar la informacion necesaria para el grafico circular
     val progress: Float,
     val color: ComposeColor,
     val label: String,
@@ -49,23 +33,21 @@ data class CircularProgressData(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Screen2() {
-    var selectedPeriod by remember { mutableStateOf("Todos") }
+fun summary() {
+    var selectedPeriod by remember { mutableStateOf("Todos") }//estado para el filtro lugares
     val context = LocalContext.current
-    val parqueDataStore = remember { ParqueDataStore(context) }
-
-    // Obtener parques según el filtro seleccionado
-    val parques = if (selectedPeriod == "Favoritos") {
+    val parqueDataStore = remember { ParqueDataStore(context) }//inicializa el parque data store y lo mantiene en memoria
+    val parques = if (selectedPeriod == "Favoritos") {// Obtener parques según el filtro seleccionado
         parqueDataStore.parques.map { lista -> lista.filter { it.favorito } }
     } else {
         parqueDataStore.parques
     }.collectAsState(initial = emptyList())
 
     // Generar datos de los gráficos circulares organizados por criterio
-    val circularProgressDataByCriterio = remember(parques.value) {
+    val circularProgressDataByCriterio = remember(parques.value) {//si cambia parques.value
         if (parques.value.isNotEmpty()) {
-            mapOf(
-                "Calidad del Aire" to parques.value.map { parque ->
+            mapOf(//mapea segun criterio y guarda los datos
+                "Calidad del Aire" to parques.value.map { parque ->//cada parque a mapa circular segun calidad aire
                     CircularProgressData(
                         progress = (parque.calidadAire / 150f).coerceIn(0f, 1f),
                         color = when {
@@ -110,23 +92,17 @@ fun Screen2() {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(ComposeColor(0xFFF5F5F5))
+            .background(MaterialTheme.colorScheme.tertiary)
     ) {
-        // Header
         TopAppBar(
             title = {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier.fillMaxWidth()
+
                 ) {
-                    Text(
-                        "Resumen Parques Registrados",
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        color = MaterialTheme.colorScheme.secondary
-                    )
                     Spacer(modifier = Modifier.height(8.dp))
-                    // Period selector moved to header
+
                     Row(
                         horizontalArrangement = Arrangement.Start,
                         modifier = Modifier.fillMaxWidth()
@@ -152,10 +128,7 @@ fun Screen2() {
                         )
                     }
                 }
-            },
-            colors = TopAppBarDefaults.topAppBarColors(
-                containerColor = ComposeColor.White
-            )
+            }
         )
 
         Column(
@@ -163,9 +136,9 @@ fun Screen2() {
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
                 .padding(16.dp)
+
         ) {
 
-            // Circular progress indicators organizados por criterio
             if (circularProgressDataByCriterio.isNotEmpty()) {
                 circularProgressDataByCriterio.forEach { (criterio, datosParques) ->
                     // Título del criterio
