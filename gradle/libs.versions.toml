@@ -1,6 +1,6 @@
 [versions]
 services = "4.4.2"
-compose = "1.8.2"
+compose = "1.8.3"
 firebaseBom = "33.15.0"
 mapsCompose = "2.15.0"
 kotlinxSerializationJson = "1.7.3"
@@ -16,6 +16,7 @@ espressoCore = "3.6.1"
 lifecycleRuntimeKtx = "2.9.1"
 activityCompose = "1.10.1"
 playServicesMaps = "19.2.0"
+navigation = "2.7.7"
 
 [libraries]
 androidx-material-icons-extended = { module = "androidx.compose.material:material-icons-extended" }
@@ -24,7 +25,7 @@ firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "fir
 mpandroidchart = { group = "com.github.PhilJay", name = "MPAndroidChart", version = "v3.1.0" }
 maps-compose = { module = "com.google.maps.android:maps-compose", version.ref = "mapsCompose" }
 androidx-datastore = { module = "androidx.datastore:datastore", version.ref = "datastore" }
-androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "nav" }
+androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigation" }
 androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastore" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }

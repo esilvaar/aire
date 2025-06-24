@@ -23,8 +23,9 @@ import androidx.compose.ui.unit.sp
 import com.example.aire.datastore.ParqueDataStore
 import androidx.compose.ui.graphics.Color as ComposeColor
 import kotlinx.coroutines.flow.map
-import androidx.navigation.NavController // Importa NavController
-import com.google.firebase.auth.FirebaseAuth // Importa FirebaseAuth
+import androidx.navigation.NavController
+import com.google.firebase.auth.FirebaseAuth
+import com.example.aire.navigation.Bottom // Importa Bottom composable
 
 data class CircularProgressData(
     val progress: Float,
@@ -36,8 +37,8 @@ data class CircularProgressData(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Summary(
-    navController: NavController, // Añadido
-    auth: FirebaseAuth            // Añadido
+    navController: NavController,
+    auth: FirebaseAuth
 ) {
     var selectedPeriod by remember { mutableStateOf("Todos") }
     val context = LocalContext.current
@@ -93,98 +94,104 @@ fun Summary(
         }
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.tertiary)
-    ) {
-
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState())
-                .padding(16.dp)
-
-        ) {
-
-            Row(
+    Scaffold(
+        content = { innerPadding ->
+            Column(
                 modifier = Modifier
-                    .fillMaxWidth()
+                    .fillMaxSize()
                     .background(MaterialTheme.colorScheme.tertiary)
-                    .padding(vertical = 8.dp),
-                horizontalArrangement = Arrangement.Start
+                    .padding(innerPadding) // Aplica el padding del Scaffold
             ) {
-                FilterChip(
-                    onClick = { selectedPeriod = "Todos" },
-                    label = { Text("Todos", fontSize = 14.sp) },
-                    selected = selectedPeriod == "Todos",
-                    colors = FilterChipDefaults.filterChipColors(
-                        containerColor = MaterialTheme.colorScheme.primary,
-                        selectedContainerColor = MaterialTheme.colorScheme.secondary,
-                        labelColor = MaterialTheme.colorScheme.secondary,
-                        selectedLabelColor = MaterialTheme.colorScheme.primary
-                    )
-                )
-                Spacer(modifier = Modifier.width(16.dp))
-                FilterChip(
-                    onClick = { selectedPeriod = "Favoritos" },
-                    label = { Text("Favoritos", fontSize = 14.sp) },
-                    selected = selectedPeriod == "Favoritos",
-                    colors = FilterChipDefaults.filterChipColors(
-                        containerColor = MaterialTheme.colorScheme.primary,
-                        selectedContainerColor = MaterialTheme.colorScheme.secondary,
-                        labelColor = MaterialTheme.colorScheme.secondary,
-                        selectedLabelColor = MaterialTheme.colorScheme.primary
-                    )
-                )
-            }
 
-            if (circularProgressDataByCriterio.isNotEmpty()) {
-                circularProgressDataByCriterio.forEach { (criterio, datosParques) ->
-                    Text(
-                        text = criterio,
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        color = ComposeColor.Black,
-                        modifier = Modifier.padding(vertical = 12.dp)
-                    )
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .verticalScroll(rememberScrollState())
+                        .padding(16.dp)
+                ) {
 
-                    LazyRow(
-                        horizontalArrangement = Arrangement.spacedBy(24.dp),
-                        contentPadding = PaddingValues(horizontal = 8.dp),
-                        modifier = Modifier.padding(bottom = 24.dp)
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(MaterialTheme.colorScheme.tertiary)
+                            .padding(vertical = 8.dp),
+                        horizontalArrangement = Arrangement.Start
                     ) {
-                        items(datosParques) { data ->
-                            Column(
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                                modifier = Modifier.width(100.dp)
+                        FilterChip(
+                            onClick = { selectedPeriod = "Todos" },
+                            label = { Text("Todos", fontSize = 14.sp) },
+                            selected = selectedPeriod == "Todos",
+                            colors = FilterChipDefaults.filterChipColors(
+                                containerColor = MaterialTheme.colorScheme.primary,
+                                selectedContainerColor = MaterialTheme.colorScheme.secondary,
+                                labelColor = MaterialTheme.colorScheme.secondary,
+                                selectedLabelColor = MaterialTheme.colorScheme.primary
+                            )
+                        )
+                        Spacer(modifier = Modifier.width(16.dp))
+                        FilterChip(
+                            onClick = { selectedPeriod = "Favoritos" },
+                            label = { Text("Favoritos", fontSize = 14.sp) },
+                            selected = selectedPeriod == "Favoritos",
+                            colors = FilterChipDefaults.filterChipColors(
+                                containerColor = MaterialTheme.colorScheme.primary,
+                                selectedContainerColor = MaterialTheme.colorScheme.secondary,
+                                labelColor = MaterialTheme.colorScheme.secondary,
+                                selectedLabelColor = MaterialTheme.colorScheme.primary
+                            )
+                        )
+                    }
+
+                    if (circularProgressDataByCriterio.isNotEmpty()) {
+                        circularProgressDataByCriterio.forEach { (criterio, datosParques) ->
+                            Text(
+                                text = criterio,
+                                fontSize = 18.sp,
+                                fontWeight = FontWeight.SemiBold,
+                                color = ComposeColor.Black,
+                                modifier = Modifier.padding(vertical = 12.dp)
+                            )
+
+                            LazyRow(
+                                horizontalArrangement = Arrangement.spacedBy(24.dp),
+                                contentPadding = PaddingValues(horizontal = 8.dp),
+                                modifier = Modifier.padding(bottom = 24.dp)
                             ) {
-                                CircularProgressIndicator(
-                                    progress = data.progress,
-                                    color = data.color,
-                                    backgroundColor = ComposeColor(0xFFE5E7EB),
-                                    label = data.label
-                                )
-                                Spacer(modifier = Modifier.height(8.dp))
-                                Text(
-                                    text = data.title,
-                                    fontSize = 10.sp,
-                                    fontWeight = FontWeight.Medium,
-                                    color = ComposeColor.Gray,
-                                    textAlign = TextAlign.Center,
-                                    maxLines = 2
-                                )
+                                items(datosParques) { data ->
+                                    Column(
+                                        horizontalAlignment = Alignment.CenterHorizontally,
+                                        modifier = Modifier.width(100.dp)
+                                    ) {
+                                        CircularProgressIndicator(
+                                            progress = data.progress,
+                                            color = data.color,
+                                            backgroundColor = ComposeColor(0xFFE5E7EB),
+                                            label = data.label
+                                        )
+                                        Spacer(modifier = Modifier.height(8.dp))
+                                        Text(
+                                            text = data.title,
+                                            fontSize = 10.sp,
+                                            fontWeight = FontWeight.Medium,
+                                            color = ComposeColor.Gray,
+                                            textAlign = TextAlign.Center,
+                                            maxLines = 2
+                                        )
+                                    }
+                                }
                             }
                         }
                     }
+
+                    Spacer(modifier = Modifier.height(80.dp))
                 }
             }
-
-            Spacer(modifier = Modifier.height(80.dp))
+        },
+        bottomBar = {
+            Bottom(navController = navController)
         }
-    }
+    )
 }
-
 
 @Composable
 fun CircularProgressIndicator(
