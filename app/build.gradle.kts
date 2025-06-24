@@ -1,8 +1,12 @@
+import org.jetbrains.kotlin.commonizer.OptimisticNumberCommonizationEnabledKey.alias
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.googleServices)
     id("org.jetbrains.kotlin.plugin.serialization") version "1.9.10"
+
 }
 
 android {
@@ -44,20 +48,22 @@ android {
 }
 
 dependencies {
+    implementation(libs.firebase.auth)
+    implementation(platform(libs.firebase.bom))
     implementation(libs.androidx.material.icons.extended)
-    implementation(libs.mpandroidchart)
-    implementation(libs.androidx.datastore)
-    implementation(libs.kotlinx.serialization.json)
+    implementation(libs.material3)
     implementation(libs.androidx.navigation.compose)
+    implementation(libs.androidx.datastore)
     implementation(libs.androidx.datastore.preferences)
+    implementation(libs.kotlinx.serialization.json)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
-    // Elimina el BOM para material3 y fija la versión explícita
-    implementation(libs.material3)
+    implementation(libs.mpandroidchart)
     implementation(libs.maps.compose)
     implementation(libs.play.services.maps.v1820)
-    // Puedes dejar otras dependencias tal cual las tienes
+
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

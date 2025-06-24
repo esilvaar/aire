@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "982274904706",
+    "project_id": "aire-4bc02",
+    "storage_bucket": "aire-4bc02.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:982274904706:android:a1558709f31c837ce49a9b",
+        "android_client_info": {
+          "package_name": "com.example.aire"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCAMn9dplZUG-G98rH66EWBDjtsXqk43-0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

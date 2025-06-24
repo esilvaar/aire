@@ -19,79 +19,80 @@ import com.example.aire.datastore.ParqueDataStore
 import com.google.android.gms.maps.model.*
 import com.google.maps.android.compose.*
 import com.example.aire.model.Parque
+import androidx.navigation.NavController // Importa NavController
+import com.google.firebase.auth.FirebaseAuth // Importa FirebaseAuth
 
 @Composable
-fun Map(onToggleTheme: () -> Unit) {
+fun Map(
+    navController: NavController, // Añadido
+    auth: FirebaseAuth,           // Añadido
+    onToggleTheme: () -> Unit
+) {
     val context = LocalContext.current
     val parqueDataStore = remember { ParqueDataStore(context) }
-    val parques by parqueDataStore.parques.collectAsState(initial = emptyList())//mismo que home
-    var expanded by remember { mutableStateOf(false) }//estado para filtro dropdown
-    var nivelSeleccionado by remember { mutableStateOf("Filtrar") }//recuerda el nivel seleccionado
-    var filtroTipo by remember { mutableStateOf("Todos") }//recuerda el tipo seleccionado
-    var searchText by remember { mutableStateOf(TextFieldValue("")) }//guarda el texto de busqueda
-    val niveles = listOf("Filtrar", "Buena", "Moderada", "Alta")//define una lista de niveles
+    val parques by parqueDataStore.parques.collectAsState(initial = emptyList())
+    var expanded by remember { mutableStateOf(false) }
+    var nivelSeleccionado by remember { mutableStateOf("Filtrar") }
+    var filtroTipo by remember { mutableStateOf("Todos") }
+    var searchText by remember { mutableStateOf(TextFieldValue("")) }
+    val niveles = listOf("Filtrar", "Buena", "Moderada", "Alta")
 
-    //funcion local para filtrar parques segun criterios
     fun filtrarParques(parques: List<Parque>, nivel: String, tipo: String, busqueda: String): List<Parque> {
-        var parquesFiltrados = parques//guarda los filtrados
+        var parquesFiltrados = parques
 
-        parquesFiltrados = when (nivel) {//por nivel de calidad
+        parquesFiltrados = when (nivel) {
             "Buena" -> parquesFiltrados.filter { it.calidadAire < 50 }
             "Moderada" -> parquesFiltrados.filter { it.calidadAire in 50..99 }
             "Alta" -> parquesFiltrados.filter { it.calidadAire >= 100 }
             else -> parquesFiltrados
         }
-        parquesFiltrados = when (tipo) {//filtra por tipo
+        parquesFiltrados = when (tipo) {
             "Urbano" -> parquesFiltrados.filter { it.tipo == "urbano" }
             "Nacional" -> parquesFiltrados.filter { it.tipo == "nacional" }
             else -> parquesFiltrados
         }
-        if (busqueda.isNotEmpty()) {//segun nombre de barra busqueda
+        if (busqueda.isNotEmpty()) {
             parquesFiltrados = parquesFiltrados.filter {
                 it.nombre.contains(busqueda, ignoreCase = true)
             }
         }
         return parquesFiltrados
     }
-    val parquesFiltrados = filtrarParques(parques, nivelSeleccionado, filtroTipo, searchText.text)//llama a la funcion
-    val defaultLocation = LatLng(//define la ubicacion por defecto
+    val parquesFiltrados = filtrarParques(parques, nivelSeleccionado, filtroTipo, searchText.text)
+    val defaultLocation = LatLng(
         parquesFiltrados.firstOrNull()?.coordenadaY ?: -33.45,
         parquesFiltrados.firstOrNull()?.coordenadaX ?: -70.6667
     )
-    val cameraPositionState = rememberCameraPositionState {//recuerda el estado del zoom posicion etc
+    val cameraPositionState = rememberCameraPositionState {
         position = CameraPosition.fromLatLngZoom(defaultLocation, 11f)
     }
 
     Box(modifier = Modifier.fillMaxSize()) {
-        // Mapa con marcadores
         GoogleMap(
             modifier = Modifier.fillMaxSize(),
             cameraPositionState = cameraPositionState
         ) {
 
-            parquesFiltrados.forEach { parque ->// Agrega marcadores para cada parque filtrado
+            parquesFiltrados.forEach { parque ->
                 val hue = when {
                     parque.calidadAire < 50 -> BitmapDescriptorFactory.HUE_GREEN
                     parque.calidadAire in 50..99 -> BitmapDescriptorFactory.HUE_YELLOW
                     else ->  BitmapDescriptorFactory.HUE_RED
                 }
 
-                Marker(//agrega los marcadores anteriores
+                Marker(
                     state = MarkerState(position = LatLng(parque.coordenadaY, parque.coordenadaX)),
                     icon = BitmapDescriptorFactory.defaultMarker(hue),
-
                 )
             }
         }
 
-        // Controles superiores
         Column(
             modifier = Modifier
                 .align(Alignment.TopStart)
                 .padding(16.dp)
                 .fillMaxWidth()
         ) {
-            // Barra de búsqueda
             OutlinedTextField(
                 value = searchText,
                 onValueChange = { searchText = it },
@@ -115,13 +116,11 @@ fun Map(onToggleTheme: () -> Unit) {
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            // Fila única con todos los filtros alineados
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                // Dropdown para filtro de calidad del aire
                 Box {
                     Button(
                         onClick = { expanded = true },
@@ -171,7 +170,6 @@ fun Map(onToggleTheme: () -> Unit) {
                     }
                 }
 
-                // Botón Urbano
                 Button(
                     onClick = {
                         filtroTipo = if (filtroTipo == "Urbano") "Todos" else "Urbano"
@@ -205,7 +203,6 @@ fun Map(onToggleTheme: () -> Unit) {
                     }
                 }
 
-                // Botón Nacional
                 Button(
                     onClick = {
                         filtroTipo = if (filtroTipo == "Nacional") "Todos" else "Nacional"

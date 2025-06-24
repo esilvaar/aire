@@ -23,8 +23,10 @@ import androidx.compose.ui.unit.sp
 import com.example.aire.datastore.ParqueDataStore
 import androidx.compose.ui.graphics.Color as ComposeColor
 import kotlinx.coroutines.flow.map
+import androidx.navigation.NavController // Importa NavController
+import com.google.firebase.auth.FirebaseAuth // Importa FirebaseAuth
 
-data class CircularProgressData(//define clase para almacenar la informacion necesaria para el grafico circular
+data class CircularProgressData(
     val progress: Float,
     val color: ComposeColor,
     val label: String,
@@ -33,21 +35,23 @@ data class CircularProgressData(//define clase para almacenar la informacion nec
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun summary() {
-    var selectedPeriod by remember { mutableStateOf("Todos") }//estado para el filtro lugares
+fun Summary(
+    navController: NavController, // Añadido
+    auth: FirebaseAuth            // Añadido
+) {
+    var selectedPeriod by remember { mutableStateOf("Todos") }
     val context = LocalContext.current
-    val parqueDataStore = remember { ParqueDataStore(context) }//inicializa el parque data store y lo mantiene en memoria
-    val parques = if (selectedPeriod == "Favoritos") {// Obtener parques según el filtro seleccionado
+    val parqueDataStore = remember { ParqueDataStore(context) }
+    val parques = if (selectedPeriod == "Favoritos") {
         parqueDataStore.parques.map { lista -> lista.filter { it.favorito } }
     } else {
         parqueDataStore.parques
     }.collectAsState(initial = emptyList())
 
-    // Generar datos de los gráficos circulares organizados por criterio
-    val circularProgressDataByCriterio = remember(parques.value) {//si cambia parques.value
+    val circularProgressDataByCriterio = remember(parques.value) {
         if (parques.value.isNotEmpty()) {
-            mapOf(//mapea segun criterio y guarda los datos
-                "Calidad del Aire" to parques.value.map { parque ->//cada parque a mapa circular segun calidad aire
+            mapOf(
+                "Calidad del Aire" to parques.value.map { parque ->
                     CircularProgressData(
                         progress = (parque.calidadAire / 150f).coerceIn(0f, 1f),
                         color = when {
@@ -137,7 +141,6 @@ fun summary() {
 
             if (circularProgressDataByCriterio.isNotEmpty()) {
                 circularProgressDataByCriterio.forEach { (criterio, datosParques) ->
-                    // Título del criterio
                     Text(
                         text = criterio,
                         fontSize = 18.sp,
@@ -146,7 +149,6 @@ fun summary() {
                         modifier = Modifier.padding(vertical = 12.dp)
                     )
 
-                    // Fila horizontal con todos los parques para este criterio
                     LazyRow(
                         horizontalArrangement = Arrangement.spacedBy(24.dp),
                         contentPadding = PaddingValues(horizontal = 8.dp),
@@ -178,7 +180,7 @@ fun summary() {
                 }
             }
 
-            Spacer(modifier = Modifier.height(80.dp)) // Space for bottom navigation
+            Spacer(modifier = Modifier.height(80.dp))
         }
     }
 }
@@ -200,14 +202,12 @@ fun CircularProgressIndicator(
             val strokeWidth = 8.dp.toPx()
             val radius = (size.minDimension - strokeWidth) / 2
 
-            // Background circle
             drawCircle(
                 color = backgroundColor,
                 radius = radius,
                 style = Stroke(strokeWidth, cap = StrokeCap.Round)
             )
 
-            // Progress arc
             val sweepAngle = 360 * progress
             drawArc(
                 color = color,
